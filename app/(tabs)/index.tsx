@@ -7,6 +7,15 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
 
+import Body from '@/components/practice/Body';
+import BudgetCard from '@/components/practice/BudgetCard';
+import Counter from '@/components/practice/Counter';
+import ExpenseScreen from '@/components/practice/ExpenseScreen';
+import Greeting from '@/components/practice/Greeting';
+import Header from '@/components/practice/Header';
+import LikeButton from '@/components/practice/LikeButton';
+import UserCard from '@/components/practice/UserCard';
+
 export default function HomeScreen() {
   return (
     <ParallaxScrollView
@@ -18,10 +27,19 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
+        <Header />
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
+        <Greeting name="まる" />
+        <UserCard name="ゴリラ" age={30} />
+        <LikeButton title="家計簿アプリ" />
+        <LikeButton title="React Native" />
+        <ExpenseScreen title="支出メモ" />
+        <BudgetCard category="食費" limit={3000} />
+        <Counter />
+        <Body />
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
