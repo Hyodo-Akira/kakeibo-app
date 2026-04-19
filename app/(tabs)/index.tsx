@@ -14,6 +14,7 @@ import ExpenseScreen from '@/components/practice/ExpenseScreen';
 import Greeting from '@/components/practice/Greeting';
 import Header from '@/components/practice/Header';
 import LikeButton from '@/components/practice/LikeButton';
+import TextInputPractice from '@/components/practice/TextInputPractice';
 import UserCard from '@/components/practice/UserCard';
 
 export default function HomeScreen() {
@@ -40,6 +41,7 @@ export default function HomeScreen() {
         <BudgetCard category="食費" limit={3000} />
         <Counter />
         <Body />
+        <TextInputPractice />
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
