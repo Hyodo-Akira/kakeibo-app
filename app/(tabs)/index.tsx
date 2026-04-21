@@ -13,6 +13,7 @@ import Counter from '@/components/practice/Counter';
 import ExpenseScreen from '@/components/practice/ExpenseScreen';
 import Greeting from '@/components/practice/Greeting';
 import Header from '@/components/practice/Header';
+import ItemList from '@/components/practice/ItemList';
 import LikeButton from '@/components/practice/LikeButton';
 import TextInputPractice from '@/components/practice/TextInputPractice';
 import UserCard from '@/components/practice/UserCard';
@@ -41,6 +42,7 @@ export default function HomeScreen() {
         <BudgetCard category="食費" limit={3000} />
         <Counter />
         <Body />
+        <ItemList />
         <TextInputPractice />
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
