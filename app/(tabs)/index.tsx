@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
 
+import AdditemList from '@/components/practice/AddItemList';
 import Body from '@/components/practice/Body';
 import BudgetCard from '@/components/practice/BudgetCard';
 import Counter from '@/components/practice/Counter';
@@ -44,6 +45,7 @@ export default function HomeScreen() {
         <Body />
         <ItemList />
         <TextInputPractice />
+        <AdditemList />
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
