@@ -16,8 +16,10 @@ import Greeting from '@/components/practice/Greeting';
 import Header from '@/components/practice/Header';
 import ItemList from '@/components/practice/ItemList';
 import LikeButton from '@/components/practice/LikeButton';
+import SumApp from '@/components/practice/SumApp';
 import TextInputPractice from '@/components/practice/TextInputPractice';
 import UserCard from '@/components/practice/UserCard';
+import KakeiboScreen from '@/components/practice/kakeiboScreen';
 
 export default function HomeScreen() {
   return (
@@ -46,6 +48,8 @@ export default function HomeScreen() {
         <ItemList />
         <TextInputPractice />
         <AdditemList />
+        <SumApp />
+        <KakeiboScreen />
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
