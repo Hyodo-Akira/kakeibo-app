@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import { Button, FlatList, Text, TextInput, View } from 'react-native';
 
 export default function KakeiboScreen() {
     const [inputText, setInputText] = useState('');
     const [inputNumber, setInputNumber] = useState('');
     const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number }[]>([]);
+    useEffect(() => {
+        const load = async () => {
+            const value = await AsyncStorage.getItem('item');
+            if (value !== null) {
+                setInputItems(JSON.parse(value) ?? []);
+            }
+        }
+        load();
+    },[]);
 
     return (
         <View>
@@ -24,11 +34,13 @@ export default function KakeiboScreen() {
             />
             <Button
                 title='追加'
-                onPress={() => {
+                onPress={async() => {
                     if (inputText === '' || inputNumber === '') return;
-                    setInputItems([...inputItems, { id: Date.now().toString(), name: inputText, amount: Number(inputNumber) }]);
                     setInputText('');
                     setInputNumber('');
+                    const newItems = [...inputItems, { id: Date.now().toString(), name: inputText, amount: Number(inputNumber) }];
+                    setInputItems(newItems);
+                    await AsyncStorage.setItem('item', JSON.stringify(newItems))
                 }}
             />
         </View>

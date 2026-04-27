@@ -15,11 +15,12 @@ import ExpenseScreen from '@/components/practice/ExpenseScreen';
 import Greeting from '@/components/practice/Greeting';
 import Header from '@/components/practice/Header';
 import ItemList from '@/components/practice/ItemList';
+import KakeiboScreen from '@/components/practice/kakeiboScreen';
 import LikeButton from '@/components/practice/LikeButton';
+import StoragePractice from '@/components/practice/Storage.Practice';
 import SumApp from '@/components/practice/SumApp';
 import TextInputPractice from '@/components/practice/TextInputPractice';
 import UserCard from '@/components/practice/UserCard';
-import KakeiboScreen from '@/components/practice/kakeiboScreen';
 
 export default function HomeScreen() {
   return (
@@ -50,6 +51,7 @@ export default function HomeScreen() {
         <AdditemList />
         <SumApp />
         <KakeiboScreen />
+        <StoragePractice />
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
