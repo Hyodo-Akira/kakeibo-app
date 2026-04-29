@@ -15,15 +15,25 @@ export default function KakeiboScreen() {
         }
         load();
     },[]);
+    const total = inputItems.reduce((sum, item) => sum + item.amount, 0);
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>家計簿</Text>
+            <Text>合計：{total}円</Text>
             <FlatList
                 data={inputItems}
                 renderItem={({ item }) =>
                     <View style={styles.card}>
                         <Text>{item.name}: {item.amount}円</Text>
+                        <Button
+                            title='削除'
+                            onPress={async() => {
+                                const newItems = inputItems.filter((i) => i.id !== item.id );
+                                setInputItems(newItems);
+                                await AsyncStorage.setItem('item', JSON.stringify(newItems))
+                            }}
+                        />
                     </View>}
                 keyExtractor={(item) => item.id}
             />
