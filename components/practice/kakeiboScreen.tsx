@@ -1,11 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-export default function KakeiboScreen() {
+type Props = {
+    category: string;
+}
+
+export default function KakeiboScreen({ category }: Props) {
     const [inputText, setInputText] = useState('');
     const [inputNumber, setInputNumber] = useState('');
-    const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number }[]>([]);
+    const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number; category: string; }[]>([]);
     useEffect(() => {
         const load = async () => {
             const value = await AsyncStorage.getItem('item');
@@ -20,23 +24,25 @@ export default function KakeiboScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>家計簿</Text>
-            <Text>合計：{total}円</Text>
             <FlatList
                 data={inputItems}
                 renderItem={({ item }) =>
                     <View style={styles.card}>
-                        <Text>{item.name}: {item.amount}円</Text>
-                        <Button
-                            title='削除'
+                        <Text style={styles.listName}>【{item.category}】{item.name}: {item.amount}円</Text>
+                        <TouchableOpacity
+                            style={styles.deleteButton}
                             onPress={async() => {
                                 const newItems = inputItems.filter((i) => i.id !== item.id );
                                 setInputItems(newItems);
                                 await AsyncStorage.setItem('item', JSON.stringify(newItems))
-                            }}
-                        />
+                            }}>
+                        <Text>削除</Text>
+                        </TouchableOpacity>
+                            
                     </View>}
                 keyExtractor={(item) => item.id}
             />
+            <Text style={styles.total}>合計：{total}円</Text>
             <View style={styles.inputRow}>
                 <TextInput
                     style={styles.input}
@@ -56,7 +62,7 @@ export default function KakeiboScreen() {
                     if (inputText === '' || inputNumber === '') return;
                     setInputText('');
                     setInputNumber('');
-                    const newItems = [...inputItems, { id: Date.now().toString(), name: inputText, amount: Number(inputNumber) }];
+                    const newItems = [...inputItems, { id: Date.now().toString(), name: inputText, amount: Number(inputNumber), category: category }];
                     setInputItems(newItems);
                     await AsyncStorage.setItem('item', JSON.stringify(newItems))
                 }}
@@ -68,12 +74,14 @@ export default function KakeiboScreen() {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#f5f5f5',
+        marginTop: 100
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+        textAlign: 'center'
     },
     inputRow: {
         flexDirection: 'row'
@@ -95,7 +103,22 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 1},
         shadowOpacity: 0.1,
-        shadowRadius: 2
+        shadowRadius: 2,
+        flexDirection: 'row'
+    },
+    listName: {
+        fontSize: 20,
+        flex: 3,
+        margin: 'auto'
+    },
+    deleteButton: {
+        flex: 1
+    },
+    total: {
+        textAlign: 'right',
+        margin: 20,
+        fontWeight: 'bold',
+        fontSize: 30
     }
 })
 

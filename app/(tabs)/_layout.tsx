@@ -37,6 +37,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.bullet" color={color} />,                                                                                                                                                                                  
         }}                                        
       />
+      <Tabs.Screen
+        name="kakeibo"
+        options={{
+          title: '家計簿',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name='yensign' color={color} />,
+        }}
+      />
     </Tabs>
   );
 }
