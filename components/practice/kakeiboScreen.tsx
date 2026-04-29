@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Button, FlatList, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function KakeiboScreen() {
     const [inputText, setInputText] = useState('');
@@ -17,21 +17,29 @@ export default function KakeiboScreen() {
     },[]);
 
     return (
-        <View>
+        <View style={styles.container}>
+            <Text style={styles.title}>家計簿</Text>
             <FlatList
                 data={inputItems}
-                renderItem={({ item }) => <Text>{item.name}: {item.amount}円</Text>}
+                renderItem={({ item }) =>
+                    <View style={styles.card}>
+                        <Text>{item.name}: {item.amount}円</Text>
+                    </View>}
                 keyExtractor={(item) => item.id}
             />
-            <TextInput
-                value={inputText}
-                onChangeText={(text) => setInputText(text)}
-            />
-            <TextInput
-                value={inputNumber}
-                onChangeText={(text) => setInputNumber(text)}
-                keyboardType='numeric'
-            />
+            <View style={styles.inputRow}>
+                <TextInput
+                    style={styles.input}
+                    value={inputText}
+                    onChangeText={(text) => setInputText(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    value={inputNumber}
+                    onChangeText={(text) => setInputNumber(text)}
+                    keyboardType='numeric'
+                />
+            </View>
             <Button
                 title='追加'
                 onPress={async() => {
@@ -46,4 +54,38 @@ export default function KakeiboScreen() {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 16,
+        backgroundColor: '#f5f5f5'
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+    },
+    inputRow: {
+        flexDirection: 'row'
+    },
+    input: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        padding: 8,
+        marginRight: 8
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 8,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 1},
+        shadowOpacity: 0.1,
+        shadowRadius: 2
+    }
+})
 
