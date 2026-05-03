@@ -15,7 +15,6 @@ import ExpenseScreen from '@/components/practice/ExpenseScreen';
 import Greeting from '@/components/practice/Greeting';
 import Header from '@/components/practice/Header';
 import ItemList from '@/components/practice/ItemList';
-import KakeiboScreen from '@/components/practice/kakeiboScreen';
 import LikeButton from '@/components/practice/LikeButton';
 import StoragePractice from '@/components/practice/Storage.Practice';
 import SumApp from '@/components/practice/SumApp';
@@ -50,7 +49,6 @@ export default function HomeScreen() {
         <TextInputPractice />
         <AdditemList />
         <SumApp />
-        <KakeiboScreen />
         <StoragePractice />
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Button, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import CategoryTotal from './CategoryTotal';
 
 type Props = {
     category: string;
@@ -10,6 +11,7 @@ export default function KakeiboScreen({ category }: Props) {
     const [inputText, setInputText] = useState('');
     const [inputNumber, setInputNumber] = useState('');
     const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number; category: string; }[]>([]);
+    const [errorMessage, setErrorMessage] = useState('');
     useEffect(() => {
         const load = async () => {
             const value = await AsyncStorage.getItem('item');
@@ -22,57 +24,72 @@ export default function KakeiboScreen({ category }: Props) {
     const total = inputItems.reduce((sum, item) => sum + item.amount, 0);
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>家計簿</Text>
-            <FlatList
-                data={inputItems}
-                renderItem={({ item }) =>
-                    <View style={styles.card}>
-                        <Text style={styles.listName}>【{item.category}】{item.name}: {item.amount}円</Text>
-                        <TouchableOpacity
-                            style={styles.deleteButton}
-                            onPress={async() => {
-                                const newItems = inputItems.filter((i) => i.id !== item.id );
-                                setInputItems(newItems);
-                                await AsyncStorage.setItem('item', JSON.stringify(newItems))
-                            }}>
-                        <Text>削除</Text>
-                        </TouchableOpacity>
-                            
-                    </View>}
-                keyExtractor={(item) => item.id}
-            />
-            <Text style={styles.total}>合計：{total}円</Text>
-            <View style={styles.inputRow}>
-                <TextInput
-                    style={styles.input}
-                    value={inputText}
-                    onChangeText={(text) => setInputText(text)}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <Text style={styles.title}>家計簿</Text>
+                <FlatList
+                    style={{ flex: 1 }}
+                    data={inputItems}
+                    renderItem={({ item }) =>
+                        <View style={styles.card}>
+                            <Text style={styles.listName}>【{item.category}】{item.name}: {item.amount}円</Text>
+                            <TouchableOpacity
+                                style={styles.deleteButton}
+                                onPress={async() => {
+                                    const newItems = inputItems.filter((i) => i.id !== item.id );
+                                    setInputItems(newItems);
+                                    await AsyncStorage.setItem('item', JSON.stringify(newItems))
+                                }}>
+                            <Text>削除</Text>
+                            </TouchableOpacity>       
+                        </View>}
+                    keyExtractor={(item) => item.id}
                 />
-                <TextInput
-                    style={styles.input}
-                    value={inputNumber}
-                    onChangeText={(text) => setInputNumber(text)}
-                    keyboardType='numeric'
+                <Text style={styles.total}>合計：{total}円</Text>
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
+                <View style={styles.inputRow}>
+                    <TextInput
+                        placeholder='品名'
+                        placeholderTextColor='#999'
+                        style={styles.input}
+                        value={inputText}
+                        onChangeText={(text) => setInputText(text)}
+                    />
+                    <TextInput
+                        placeholder='金額'
+                        placeholderTextColor='#999'
+                        style={styles.input}
+                        value={inputNumber}
+                        onChangeText={(text) => setInputNumber(text)}
+                        keyboardType='numeric'
+                    />
+                </View>
+                <Button
+                    title='追加'
+                    onPress={async() => {
+                        if (inputText === '' || inputNumber === '') return;
+                        if (Number(inputNumber) <= 0) {
+                            setErrorMessage('金額は１円以上を入力してください');
+                            return;
+                        } else {
+                            setErrorMessage('')
+                        }
+                        setInputText('');
+                        setInputNumber('');
+                        const newItems = [...inputItems, { id: Date.now().toString(), name: inputText, amount: Number(inputNumber), category: category }];
+                        setInputItems(newItems);
+                        await AsyncStorage.setItem('item', JSON.stringify(newItems))
+                    }}
                 />
+                <CategoryTotal inputItems={inputItems} />
             </View>
-            <Button
-                title='追加'
-                onPress={async() => {
-                    if (inputText === '' || inputNumber === '') return;
-                    setInputText('');
-                    setInputNumber('');
-                    const newItems = [...inputItems, { id: Date.now().toString(), name: inputText, amount: Number(inputNumber), category: category }];
-                    setInputItems(newItems);
-                    await AsyncStorage.setItem('item', JSON.stringify(newItems))
-                }}
-            />
-        </View>
+        </TouchableWithoutFeedback>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         padding: 16,
         backgroundColor: '#f5f5f5',
         marginTop: 100
@@ -119,6 +136,10 @@ const styles = StyleSheet.create({
         margin: 20,
         fontWeight: 'bold',
         fontSize: 30
+    },
+    errorMessage: {
+        color: 'red'
     }
+    
 })
 
