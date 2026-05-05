@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import CategoryTotal from './CategoryTotal';
+import PieChartPractice from './PieChartPractice';
 
 type Props = {
     category: string;
@@ -10,7 +11,7 @@ type Props = {
 export default function KakeiboScreen({ category }: Props) {
     const [inputText, setInputText] = useState('');
     const [inputNumber, setInputNumber] = useState('');
-    const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number; category: string; }[]>([]);
+    const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number; category: string; date: string; }[]>([]);
     const [errorMessage, setErrorMessage] = useState('');
     useEffect(() => {
         const load = async () => {
@@ -21,18 +22,49 @@ export default function KakeiboScreen({ category }: Props) {
         }
         load();
     },[]);
-    const total = inputItems.reduce((sum, item) => sum + item.amount, 0);
+    const d = new Date();
+    const [currentMonth, setCurrentMonth] = useState(
+        ( String(d.getFullYear()) + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0') ).slice(0, 7)
+    );
+    const filteredItems = inputItems.filter((item) => item.date?.slice(0, 7) === currentMonth );
+    const total = filteredItems.reduce((sum, item) => sum + item.amount, 0);
+    const goPrevMonth = () => {
+        const [year, month] = currentMonth.split("-");
+        if (Number(month) - 1 === 0) {
+            setCurrentMonth(`${Number(year)-1}-12`);
+        } else {
+            setCurrentMonth(`${year}-${String(Number(month) - 1).padStart(2, '0')}`);
+        }
+    }
+    const goNextMonth = () => {
+        const [year, month] = currentMonth.split("-");
+        if (Number(month) + 1 === 13) {
+            setCurrentMonth(`${Number(year)+1}-01`);
+        } else {
+            setCurrentMonth(`${year}-${String(Number(month) + 1).padStart(2, '0')}`);
+        }
+    }
+    const [year, month] = currentMonth.split("-");
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                 <Text style={styles.title}>家計簿</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginBottom: 10 }}>
+                    <TouchableOpacity onPress={goPrevMonth}>
+                        <Text>＜　　</Text>
+                    </TouchableOpacity>
+                    <Text>{year}年{month}月</Text>
+                    <TouchableOpacity onPress={goNextMonth}>
+                        <Text>　　＞</Text>
+                    </TouchableOpacity>
+                </View>
                 <FlatList
                     style={{ flex: 1 }}
-                    data={inputItems}
+                    data={filteredItems}
                     renderItem={({ item }) =>
                         <View style={styles.card}>
-                            <Text style={styles.listName}>【{item.category}】{item.name}: {item.amount}円</Text>
+                            <Text style={styles.listName}>{Number(item.date?.split("-")[1])}/{Number(item.date?.split("-")[2])}【{item.category}】{item.name}: {item.amount}円</Text>
                             <TouchableOpacity
                                 style={styles.deleteButton}
                                 onPress={async() => {
@@ -76,12 +108,20 @@ export default function KakeiboScreen({ category }: Props) {
                         }
                         setInputText('');
                         setInputNumber('');
-                        const newItems = [...inputItems, { id: Date.now().toString(), name: inputText, amount: Number(inputNumber), category: category }];
+                        const d = new Date;
+                        const newItems = [...inputItems, {
+                            id: Date.now().toString(),
+                            name: inputText,
+                            amount: Number(inputNumber),
+                            category: category,
+                            date: String(d.getFullYear()) + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0'),
+                        }];
                         setInputItems(newItems);
                         await AsyncStorage.setItem('item', JSON.stringify(newItems))
                     }}
                 />
                 <CategoryTotal inputItems={inputItems} />
+                <PieChartPractice filteredItems={filteredItems} />
             </View>
         </TouchableWithoutFeedback>
     )
