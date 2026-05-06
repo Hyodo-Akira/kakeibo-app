@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
-import { Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import CategoryTotal from './CategoryTotal';
 import PieChartPractice from './PieChartPractice';
 
@@ -69,8 +69,17 @@ export default function KakeiboScreen({ category }: Props) {
                                 style={styles.deleteButton}
                                 onPress={async() => {
                                     const newItems = inputItems.filter((i) => i.id !== item.id );
-                                    setInputItems(newItems);
-                                    await supabase.from('expenses').delete().eq('id', item.id)
+                                    Alert.alert(
+                                        '削除確認',
+                                        '削除しますか？',
+                                        [
+                                            { text: 'いいえ' },
+                                            { text: 'はい', onPress: async () => {
+                                                setInputItems(newItems);
+                                                await supabase.from('expenses').delete().eq('id', item.id)
+                                            }},
+                                        ]
+                                    );
                                 }}>
                             <Text>削除</Text>
                             </TouchableOpacity>       

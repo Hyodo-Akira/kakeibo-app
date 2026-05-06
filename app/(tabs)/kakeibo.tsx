@@ -10,7 +10,7 @@ export default function Kakeibo() {
         <ScrollView
             style={styls.container}
             automaticallyAdjustKeyboardInsets={true}
-            keyboardShouldPersistTaps='handled'
+            keyboardShouldPersistTaps='handled'    
         >
             <KakeiboScreen category={category} />
             <CategorySelect category={category} setCategory={setCategory} />
