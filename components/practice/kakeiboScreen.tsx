@@ -1,3 +1,4 @@
+import { supabase } from '@/lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
@@ -15,9 +16,9 @@ export default function KakeiboScreen({ category }: Props) {
     const [errorMessage, setErrorMessage] = useState('');
     useEffect(() => {
         const load = async () => {
-            const value = await AsyncStorage.getItem('item');
-            if (value !== null) {
-                setInputItems(JSON.parse(value) ?? []);
+            const { data } = await supabase.from('expenses').select('*');
+            if (data !== null) {
+                setInputItems(data ?? []);
             }
         }
         load();
@@ -118,6 +119,12 @@ export default function KakeiboScreen({ category }: Props) {
                         }];
                         setInputItems(newItems);
                         await AsyncStorage.setItem('item', JSON.stringify(newItems))
+                        await supabase.from('expenses').insert({
+                            name: inputText,
+                            amount: Number(inputNumber),
+                            category: category,
+                            date: String(d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0'))
+                        });
                     }}
                 />
                 <CategoryTotal inputItems={inputItems} />

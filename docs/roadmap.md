@@ -107,3 +107,4 @@
 | 2026-05-03 | reduce・Object.entries・バリデーション・ScrollView | KeyboardAvoidingView |
 | 2026-05-05 | Dateオブジェクト・padStart・テンプレートリテラル・filter・オプショナルチェーン（?.）・防御的プログラミング | メソッドの書き方（date.getMonth()の順番）・padStartは文字列メソッド |
 | 2026-05-05 | react-native-chart-kit・PieChart・Dimensions・index・%（モジュロ）・カテゴリ別グラフ表示 | propsの型定義の混同・別ファイルを編集してしまった |
+| 2026-05-06 | Supabase insert（データ保存）・select（データ取得）・Supabaseは配列で返却されるのでJSON.parse不要 | from()とselect()の書き方・Date オブジェクトを文字列に変換する方法 |
