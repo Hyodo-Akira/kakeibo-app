@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import CategoryTotal from './CategoryTotal';
@@ -14,14 +13,14 @@ export default function KakeiboScreen({ category }: Props) {
     const [inputNumber, setInputNumber] = useState('');
     const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number; category: string; date: string; }[]>([]);
     const [errorMessage, setErrorMessage] = useState('');
-    useEffect(() => {
-        const load = async () => {
-            const { data } = await supabase.from('expenses').select('*');
-            if (data !== null) {
-                setInputItems(data ?? []);
-            }
+    const loadItems = async () => {
+        const { data } = await supabase.from('expenses').select('*');
+        if (data !== null) {
+            setInputItems(data ?? []);
         }
-        load();
+    }
+    useEffect(() => {
+        loadItems();
     },[]);
     const d = new Date();
     const [currentMonth, setCurrentMonth] = useState(
@@ -71,7 +70,7 @@ export default function KakeiboScreen({ category }: Props) {
                                 onPress={async() => {
                                     const newItems = inputItems.filter((i) => i.id !== item.id );
                                     setInputItems(newItems);
-                                    await AsyncStorage.setItem('item', JSON.stringify(newItems))
+                                    await supabase.from('expenses').delete().eq('id', item.id)
                                 }}>
                             <Text>削除</Text>
                             </TouchableOpacity>       
@@ -110,21 +109,13 @@ export default function KakeiboScreen({ category }: Props) {
                         setInputText('');
                         setInputNumber('');
                         const d = new Date;
-                        const newItems = [...inputItems, {
-                            id: Date.now().toString(),
-                            name: inputText,
-                            amount: Number(inputNumber),
-                            category: category,
-                            date: String(d.getFullYear()) + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0'),
-                        }];
-                        setInputItems(newItems);
-                        await AsyncStorage.setItem('item', JSON.stringify(newItems))
                         await supabase.from('expenses').insert({
                             name: inputText,
                             amount: Number(inputNumber),
                             category: category,
                             date: String(d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0'))
                         });
+                        await loadItems();
                     }}
                 />
                 <CategoryTotal inputItems={inputItems} />
