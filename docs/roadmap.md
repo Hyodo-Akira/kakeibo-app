@@ -21,8 +21,8 @@
 |------|------|--------|------|
 | グラフ表示（react-native-chart-kit） | 2026-05-10 | 2026-05-05 | ✅ |
 | 日付管理・月ごとの表示 | 2026-05-17 | 2026-05-05 | ✅ |
-| バックエンド・データベース（Supabase） | 2026-06-07 | - | 🔲 |
-| 認証（ログイン機能） | 2026-06-21 | - | 🔲 |
+| バックエンド・データベース（Supabase） | 2026-06-07 | 2026-05-06 | ✅ |
+| 認証（ログイン機能） | 2026-06-21 | 2026-05-09 | ✅ |
 | プッシュ通知（リマインド） | 2026-06-28 | - | 🔲 |
 | CI/CD・自動テスト | 2026-07-12 | - | 🔲 |
 
@@ -108,3 +108,4 @@
 | 2026-05-05 | Dateオブジェクト・padStart・テンプレートリテラル・filter・オプショナルチェーン（?.）・防御的プログラミング | メソッドの書き方（date.getMonth()の順番）・padStartは文字列メソッド |
 | 2026-05-05 | react-native-chart-kit・PieChart・Dimensions・index・%（モジュロ）・カテゴリ別グラフ表示 | propsの型定義の混同・別ファイルを編集してしまった |
 | 2026-05-06 | Supabase insert・select・delete・auth認証・loadItems関数の切り出し・Alert削除確認・Stack/Stack.Screenの役割・ログイン画面・アカウント作成画面・async/awaitの意味・router.replace vs push | useEffectをonPressの中に書いてしまった・_layout.tsxでreturnが関数の外に出た・コンポーネントにasyncはつけられない |
+| 2026-05-09 | router.replace vs push の使い分け・onPress に関数を渡す方法（即時実行バグ）・Supabaseのエラーハンドリング（{ data, error }）・ルート保護（getSession）・ファイル名とルートパスの違い | onPressに即時実行で渡してしまった・signUp()を2回呼んでしまった・kakeiboScreen.tsxとルートパスを混同した |
