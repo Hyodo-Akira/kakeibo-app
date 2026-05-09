@@ -107,4 +107,4 @@
 | 2026-05-03 | reduce・Object.entries・バリデーション・ScrollView | KeyboardAvoidingView |
 | 2026-05-05 | Dateオブジェクト・padStart・テンプレートリテラル・filter・オプショナルチェーン（?.）・防御的プログラミング | メソッドの書き方（date.getMonth()の順番）・padStartは文字列メソッド |
 | 2026-05-05 | react-native-chart-kit・PieChart・Dimensions・index・%（モジュロ）・カテゴリ別グラフ表示 | propsの型定義の混同・別ファイルを編集してしまった |
-| 2026-05-06 | Supabase insert（データ保存）・select（データ取得）・delete（削除）・Supabaseは配列で返却されるのでJSON.parse不要・loadItemsの切り出し・useEffectは画面表示時に1回だけ実行される処理 | from()とselect()の書き方・Date オブジェクトを文字列に変換する方法・useEffectの中にHooksは書けない・呼び出す関数は先に定義する |
+| 2026-05-06 | Supabase insert・select・delete・auth認証・loadItems関数の切り出し・Alert削除確認・Stack/Stack.Screenの役割・ログイン画面・アカウント作成画面・async/awaitの意味・router.replace vs push | useEffectをonPressの中に書いてしまった・_layout.tsxでreturnが関数の外に出た・コンポーネントにasyncはつけられない |

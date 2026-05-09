@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import CategoryTotal from './CategoryTotal';
@@ -49,7 +50,16 @@ export default function KakeiboScreen({ category }: Props) {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
-                <Text style={styles.title}>家計簿</Text>
+                <View>
+                    <Text style={styles.title}>家計簿</Text>
+                    <Button
+                        title = 'ログアウト'
+                        onPress = {async() => {
+                            await supabase.auth.signOut();
+                            router.replace('/login');
+                        }}
+                    />
+                </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginBottom: 10 }}>
                     <TouchableOpacity onPress={goPrevMonth}>
                         <Text>＜　　</Text>
@@ -140,6 +150,9 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: '#f5f5f5',
         marginTop: 100
+    },
+    header: {
+        flexDirection: 'row'
     },
     title: {
         fontSize: 24,
