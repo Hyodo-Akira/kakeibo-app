@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Button, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
@@ -23,6 +24,7 @@ export default function KakeiboScreen({ category }: Props) {
     }
     useEffect(() => {
         loadItems();
+        Notifications.requestPermissionsAsync();
     },[]);
     const d = new Date();
     const [currentMonth, setCurrentMonth] = useState(
@@ -58,6 +60,12 @@ export default function KakeiboScreen({ category }: Props) {
                         onPress = {async() => {
                             await supabase.auth.signOut();
                             router.replace('/login');
+                        }}
+                    />
+                    <Button
+                        title = '各種設定'
+                        onPress = { () => {
+                            router.push('/settings'); 
                         }}
                     />
                 </View>
