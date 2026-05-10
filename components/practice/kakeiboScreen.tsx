@@ -15,7 +15,8 @@ export default function KakeiboScreen({ category }: Props) {
     const [inputItems, setInputItems] = useState<{ id: string; name: String; amount: number; category: string; date: string; }[]>([]);
     const [errorMessage, setErrorMessage] = useState('');
     const loadItems = async () => {
-        const { data } = await supabase.from('expenses').select('*');
+        const { data: { session } } = await supabase.auth.getSession();
+        const { data } = await supabase.from('expenses').select('*').eq('user_id', session.user.id);
         if (data !== null) {
             setInputItems(data ?? []);
         }
@@ -127,8 +128,10 @@ export default function KakeiboScreen({ category }: Props) {
                         }
                         setInputText('');
                         setInputNumber('');
+                        const { data: { session } } = await supabase.auth.getSession();
                         const d = new Date;
                         await supabase.from('expenses').insert({
+                            user_id: session.user.id,
                             name: inputText,
                             amount: Number(inputNumber),
                             category: category,
