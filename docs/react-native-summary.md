@@ -431,6 +431,15 @@ d.getMinutes()              // 分（例：30）
 `05` のように1桁の数字を2桁に揃えるメソッドです。
 `padStart` は**文字列メソッド**なので、数値の場合は先に `String()` で文字列に変換する必要があります。
 
+> **つまずきポイント：`padStart` は文字列メソッド**
+> `padStart` は文字列に対して使うメソッドです。数値にはそのまま使えないため、先に `String()` で変換する必要があります。
+> ```tsx
+> // 誤り
+> (5).padStart(2, '0')           // エラー！数値には padStart はない
+> // 正しい
+> String(5).padStart(2, '0')     // → "05"
+> ```
+
 ```tsx
 String(5).padStart(2, '0')    // → "05"（2桁になるまで左に '0' を埋める）
 String(12).padStart(2, '0')   // → "12"（すでに2桁なのでそのまま）
@@ -1042,6 +1051,203 @@ const [minute, setMinute] = useState('00');
 
 ---
 
+## 19. テスト（Jest）
+
+### テストとはなにか
+
+「コードが正しく動くか」を自動で確認する仕組みです。手動で確認しなくても、コマンド1つでまとめて検証できます。
+
+### テストの種類
+
+| 種類 | 内容 |
+|------|------|
+| ユニットテスト | 関数1つの動作確認 |
+| 統合テスト | 複数機能の連携確認 |
+| E2Eテスト | 画面操作の全体確認 |
+
+現場でよく使われるのはこの3つが中心です。
+
+### セットアップ
+
+```bash
+npx expo install jest-expo jest @types/jest
+```
+
+`package.json` に以下を追加します：
+
+```json
+"scripts": {
+  "test": "jest"
+},
+"jest": {
+  "preset": "jest-expo"
+}
+```
+
+`jest-expo` は Expo プロジェクト用に最適化された Jest の設定セットです。これを指定するだけで細かい設定が不要になります。
+
+### 純粋な関数として切り出す
+
+コンポーネントの中に書かれたロジックはそのままではテストしにくいです。
+「純粋な関数（同じ引数を渡したら必ず同じ結果が返ってくる関数）」として切り出すとテストが書きやすくなります。
+
+```tsx
+// コンポーネントの中（テストしにくい）
+export default function CategoryTotal({ inputItems }: Props) {
+    const accTotal = inputItems.reduce((acc, item) => { ... }, {});
+    return <View>...</View>
+}
+
+// 切り出した純粋な関数（テストしやすい）
+// utils/calcCategoryTotal.ts
+export function calcCategoryTotal(items: {...}[]) {
+    return items.reduce((acc, item) => {
+        if (acc[item.category]) {
+            acc[item.category] = acc[item.category] + item.amount;
+        } else {
+            acc[item.category] = item.amount;
+        }
+        return acc;
+    }, {} as { [key: string]: number });
+}
+```
+
+### テストコードの書き方
+
+テストファイルは `__tests__/` フォルダに置きます。ファイル名は `対象ファイル名.test.ts` にするのが慣習です。
+
+```ts
+// __tests__/calcCategoryTotal.test.ts
+import { calcCategoryTotal } from "../utils/calcCategoryTotal";
+
+test('同じカテゴリが2件あるとき合計が正しく計算される', () => {
+    // 準備：テスト用のデータを用意する
+    const items = [
+        { id: "1", name: "ランチ", amount: 800, category: "食費" },
+        { id: "2", name: "夕食", amount: 1200, category: "食費" },
+    ];
+
+    // 実行：関数を呼ぶ
+    const result = calcCategoryTotal(items);
+
+    // 確認：期待する結果と一致するか
+    expect(result).toEqual({ "食費": 2000 });
+});
+```
+
+### テストの実行
+
+```bash
+npm test           # すべてのテストを実行
+npm test hoge      # hoge という名前のファイルだけ実行
+```
+
+`npm test` → `package.json` の `"test": "jest"` → Jest が起動 → `__tests__/` を探してすべて実行、という流れです。
+
+### `test` と `it` の違い
+
+```ts
+test('説明', () => { ... });  // どちらも同じ動作
+it('説明', () => { ... });   // 英語で "it should..." の形にするときに使われることが多い
+```
+
+> **つまずきポイント：空の配列の書き方**
+> 「0件のデータ」をテストするとき、`[""]` と書くと「空文字列が1件入った配列」になってしまいます。
+> ```ts
+> // 誤り：空文字列が1件入っている
+> const items = [""];
+>
+> // 正しい：本当に0件の配列
+> const items: { id: string; name: string; amount: number; category: string; }[] = [];
+> ```
+> TypeScript では `[]` だけだと型を推論できないため、型注釈をつける必要があります。
+
+---
+
+## 20. CI/CD（GitHub Actions）
+
+### CI/CDとはなにか
+
+| 略語 | 正式名称 | 意味 |
+|------|---------|------|
+| CI | Continuous Integration | コードを push するたびに自動でテストを実行する |
+| CD | Continuous Delivery/Deployment | テストが通ったら自動でデプロイする |
+
+### GitHub Actions
+
+GitHub が提供する CI/CD ツールです。`.github/workflows/` フォルダに YAML ファイルを置くだけで動きます。
+
+```
+git push
+    ↓
+GitHub が .github/workflows/ の設定を読む
+    ↓
+npm test を自動実行
+    ↓
+Actions タブで結果を確認できる
+```
+
+### YAML とはなにか
+
+設定ファイルによく使われる書き方です。インデント（字下げ）で構造を表現します。JSON より読みやすいのが特徴です。
+
+```yaml
+# JSON の場合
+# { "name": "テスト", "on": "push" }
+
+# YAML の場合
+name: テスト    # # はコメント
+on: push
+```
+
+### 設定ファイルの書き方
+
+`.github/workflows/test.yml` を作成します：
+
+```yaml
+name: テスト自動実行
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm test
+```
+
+| 設定 | 意味 |
+|------|------|
+| `name` | ワークフローの名前（GitHub の Actions タブに表示される） |
+| `on: push` | push したときに実行 |
+| `runs-on: ubuntu-latest` | Linux 環境で実行 |
+| `actions/checkout@v4` | リポジトリのコードを取得する |
+| `actions/setup-node@v4` | Node.js をインストールする |
+| `run: npm install` | パッケージをインストール |
+| `run: npm test` | テストを実行 |
+
+### ファイルの役割の違い
+
+| ファイル | 役割 |
+|---------|------|
+| `__tests__/*.test.ts` | **何を**テストするかを書く |
+| `.github/workflows/*.yml` | **いつ・どうやって**テストを実行するかを書く |
+
+> **つまずきポイント①：フォルダ名のタイポ**
+> `.github/workflows/` の `workflows` はスペルミスしやすいです。`workfrows` と書くと GitHub が認識できず、Actions が動きません。
+
+> **つまずきポイント②：`__tests__` と `workflows` の役割の混同**
+> 「テストの処理をどこに書くか」で迷いやすいポイントです。
+> - テスト内容（何を確認するか） → `__tests__/` に書く
+> - 実行タイミング（いつ動かすか） → `.github/workflows/` に書く
+
+---
+
 ## よく使うパターン集
 
 ### データ取得 → State に保存
@@ -1076,22 +1282,3 @@ Alert.alert(
 );
 ```
 
----
-
-## つまずきやすいポイント一覧
-
-| ポイント | 注意点 |
-|---------|--------|
-| `onPress={fn()}` | 即時実行になる。`onPress={() => fn()}` と書く |
-| `getMonth()` | 0始まりなので `+1` が必要 |
-| `padStart` | 文字列メソッドなので `String()` で変換してから使う |
-| `useEffect` | `onPress` の中には書けない |
-| コンポーネントに `async` | つけられない。内部の関数に `async` をつける |
-| ファイル名とルートパス | `settings.tsx` のルートは `/settings`（sあり） |
-| `router.replace` vs `push` | ログイン後は `replace`、通常の遷移は `push` |
-| `getSession()` に `await` を忘れる | Promise オブジェクトになり `session` が使えない |
-| `select()` で行を絞り込もうとする | `select()` は列指定、行の絞り込みは `.eq()` |
-| プロパティにクォートをつける | `session.user.'id'` ではなく `session.user.id` |
-| `shouldShowAlert`（通知） | deprecated。`shouldShowBanner` と `shouldShowList` を使う |
-| 通知トリガーの `repeats: true` | SDK 51以降は `SchedulableTriggerInputTypes.DAILY` を使う |
-| テンプレートリテラルのクォート | `${}` を使うときはシングルクォートではなくバッククォート |

@@ -24,7 +24,7 @@
 | バックエンド・データベース（Supabase） | 2026-06-07 | 2026-05-06 | ✅ |
 | 認証（ログイン機能） | 2026-06-21 | 2026-05-09 | ✅ |
 | プッシュ通知（リマインド） | 2026-06-28 | 2026-05-10 | ✅ |
-| CI/CD・自動テスト | 2026-07-12 | - | 🔲 |
+| CI/CD・自動テスト | 2026-07-12 | 2026-05-16 | ✅ |
 
 ---
 
@@ -110,3 +110,4 @@
 | 2026-05-06 | Supabase insert・select・delete・auth認証・loadItems関数の切り出し・Alert削除確認・Stack/Stack.Screenの役割・ログイン画面・アカウント作成画面・async/awaitの意味・router.replace vs push | useEffectをonPressの中に書いてしまった・_layout.tsxでreturnが関数の外に出た・コンポーネントにasyncはつけられない |
 | 2026-05-09 | router.replace vs push の使い分け・onPress に関数を渡す方法（即時実行バグ）・Supabaseのエラーハンドリング（{ data, error }）・ルート保護（getSession）・ファイル名とルートパスの違い | onPressに即時実行で渡してしまった・signUp()を2回呼んでしまった・kakeiboScreen.tsxとルートパスを混同した |
 | 2026-05-10 | getSession()でユーザーID取得・ネストした分解代入（{ data: { session } }）・.eq()でデータ絞り込み・RLS（Row Level Security）の仕組みと設定・SELECT/INSERT/DELETEポリシー作成 | awaitの付け忘れ・select()と.eq()の役割の違い・プロパティアクセスにクォートは不要 |
+| 2026-05-16 | ユニットテスト・Jest・純粋な関数への切り出し・GitHub Actions・YAML・npm testの仕組み | workflowsのタイポ・__tests__とworkflowsの役割の混同 |
